@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>واجهة إدخال + تقرير Excel</title>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+  <style>
+    :root{
+      --bg:#0b1220; --card:#111827; --text:#e5e7eb; --muted:#9ca3af; --line:#243244;
+      --btn:#2b87e6; --btn2:#1f6fd0; --ok:#16a34a; --danger:#b91c1c;
+      --field:#1f2937; --fieldLine:#334155;
+    }
+    body{font-family:Arial; background:var(--bg); color:var(--text); margin:0; padding:18px;}
+    .box{max-width:900px; margin:12px auto; background:var(--card); border:1px solid var(--line); border-radius:14px; padding:16px;}
+    h2{margin:0 0 12px 0;}
+    label{display:block; margin:10px 0 6px; color:var(--muted); font-size:14px;}
+    input,select{
+      width:100%; padding:10px; border-radius:10px; outline:none;
+      border:1px solid var(--fieldLine); background:var(--field); color:var(--text);
+      box-sizing:border-box;
+    }
+    .row{display:flex; gap:10px; flex-wrap:wrap;}
+    .col{flex:1; min-width:220px;}
+    button{
+      background:var(--btn); color:white; border:none; padding:10px 14px;
+      border-radius:10px; cursor:pointer; font-weight:700;
+    }
+    button:hover{background:var(--btn2);}
+    .btnOk{background:var(--ok);}
+    .muted{color:var(--muted); font-size:13px;}
+    table{width:100%; border-collapse:collapse; margin-top:10px;}
+    th,td{border:1px solid var(--line); padding:8px; text-align:center; font-size:13px; vertical-align:top;}
+    th{color:var(--muted); font-weight:700;}
+    .topbar{display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap;}
+    .pill{display:inline-block; padding:4px 10px; border:1px solid var(--line); border-radius:999px; color:var(--muted); font-size:12px;}
+
+    /* Admin-only box hidden by default */
+    #adminBox{display:none;}
+
+    /* Big save button */
+    .btnSaveBig{
+      padding:14px 18px;
+      font-size:16px;
+      border-radius:12px;
+      min-width:180px;
+    }
+
+    /* Hidden admin trigger */
+    .adminDot{
+      background:transparent;
+      border:1px solid var(--line);
+      color:var(--muted);
+      padding:8px 12px;
+      border-radius:999px;
+      font-weight:800;
+    }
+    .adminDot:hover{
+      background:#0f172a;
+      color:var(--text);
+    }
+  </style>
+</head>
+
+<body>
+
+<!-- ENTRY -->
+<div class="box">
+  <div class="topbar">
+    <h2>واجهة الإدخال</h2>
+    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+      <span class="pill">Entry</span>
+      <!-- مخفي شكلياً -->
+      <button class="adminDot" title="Admin" onclick="openAdmin()">⋯</button>
+      <button class="adminDot" id="btnLogout" onclick="adminLogout()" style="display:none;">خروج</button>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col">
+      <label>نوع الرحلة</label>
+      <select id="in_tripType">
+        <option value="قدوم">قدوم</option>
+        <option value="مغادرة">مغادرة</option>
+      </select>
+    </div>
+
+    <div class="col">
+      <label>اسم الايرلاين</label>
+      <select id="in_airline">
+        <option>Air Arabia</option>
+        <option>Cham wings</option>
+        <option>Egypt Air</option>
+        <option>Emirates</option>
+        <option>Fly Dubai</option>
+        <option>Middle East airline</option>
+        <option>Pegasus Airine</option>
+        <option>QATAR AIRWAYS</option>
+        <option>Syrian Air</option>
+        <option>Turkish Airlines</option>
+        <option>Meraj</option>
+        <option>Royal Jordanian</option>
+        <option>UR</option>
+        <option>Bravo</option>
+        <option>Fly Baghdad</option>
+        <option>Avia Traffic</option>
+        <option>Tail wind</option>
+        <option>Mahan Air</option>
+        <option>Armenia Air</option>
+        <option>Jordan aviation</option>
+        <option>TABAN AIR</option>
+        <option>Jet Magic Airline</option>
+        <option>Klas Jet Airline</option>
+        <option>RED WINGS</option>
+        <option>PAKISTAN AIR</option>
+        <option>QESHM AIR</option>
+        <option>Cash Customers</option>
+        <option>ATA air</option>
+        <option>Aseman air</option>
+        <option>Nile Air</option>
+        <option>ASA</option>
+        <option>UT Air</option>
+        <option>SAHA Air</option>
+        <option>Pars Air</option>
+        <option>Zagros Air</option>
+        <option>AEROFLOT Airline</option>
+        <option>Fly Arna</option>
+        <option>Fly Nas</option>
+        <option>Flyadeal</option>
+        <option>Fly Sepehran</option>
+        <option>VIP Terminal</option>
+        <option>Salam Air</option>
+        <option>ASL Group</option>
+        <option>Baghdad Lounge</option>
+        <option>Caspian Air</option>
+        <option>IRAN Air</option>
+        <option>freebird</option>
+        <option>Iran Tour</option>
+        <option>Air Arabia-Abo Dhabi</option>
+        <option>A Jet</option>
+        <option>Gulf Air</option>
+        <option>Sama terminal</option>
+        <option>Global</option>
+        <option>Simor</option>
+        <option>Al Jazzera</option>
+        <option>Akitu Aviation</option>
+        <option>Alpha Star Aviation</option>
+        <option>Yazd airline</option>
+        <option>AVA</option>
+        <option>Sendebad travel</option>
+        <option>Fly cham</option>
+        <option>AzerbaijanAirlines</option>
+        <option>Fly Kish</option>
+        <option>Aegean Air</option>
+        <option>Oman Air</option>
+        <option>AlRawdatain-VRS</option>
+        <option>AlRawdatain-AVA</option>
+        <option>AlRawdatain-MJ</option>
+        <option>Charter</option>
+        <option>Akiti Aviation</option>
+        <option>Infinifi</option>
+        <option>ItlalaAlsharq-Kich</option>
+        <option>ItlalaAlsharq-MJ</option>
+        <option>ItlalaAlsharq-SN</option>
+        <option>ItlalaAlsharq-SR</option>
+        <option>ItlalaAlsharq-QM</option>
+        <option>ItlalaAlsharq-AN</option>
+        <option>ItlalaAlsharq-ARN</option>
+        <option>ItlalaAlsharq-YZD</option>
+        <option>Arab Wings</option>
+        <option>Al Nisreen Company</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col">
+      <label>رقم الرحلة</label>
+      <input id="in_flightNo" placeholder="مثال: FZ123 أو EK202" />
+    </div>
+    <div class="col">
+      <label>الرقم الوظيفي</label>
+      <input id="in_empId" placeholder="مثال: 10025" />
+    </div>
+  </div>
+
+  <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap">
+    <button class="btnOk btnSaveBig" onclick="saveEntry()">حفظ</button>
+    <button onclick="clearEntry()">تفريغ</button>
+  </div>
+
+  <p id="entryMsg" class="muted" style="margin-top:10px;"></p>
+</div>
+
+<!-- REPORT (ADMIN ONLY) -->
+<div class="box" id="adminBox">
+  <div class="topbar">
+    <h2>التقرير</h2>
+    <span class="pill">Admin فقط</span>
+  </div>
+
+  <div class="row">
+    <div class="col">
+      <label>من تاريخ</label>
+      <input id="r_from" type="date" onchange="renderReport()" />
+    </div>
+    <div class="col">
+      <label>إلى تاريخ</label>
+      <input id="r_to" type="date" onchange="renderReport()" />
+    </div>
+    <div class="col">
+      <label>نوع الرحلة</label>
+      <select id="r_tripType" onchange="renderReport()">
+        <option value="">الكل</option>
+        <option value="قدوم">قدوم</option>
+        <option value="مغادرة">مغادرة</option>
+      </select>
+    </div>
+    <div class="col">
+      <label>اسم الايرلاين</label>
+      <select id="r_airline" onchange="renderReport()">
+        <option value="">الكل</option>
+        <option>Air Arabia</option>
+        <option>Cham wings</option>
+        <option>Egypt Air</option>
+        <option>Emirates</option>
+        <option>Fly Dubai</option>
+        <option>Middle East airline</option>
+        <option>Pegasus Airine</option>
+        <option>QATAR AIRWAYS</option>
+        <option>Syrian Air</option>
+        <option>Turkish Airlines</option>
+        <option>Meraj</option>
+        <option>Royal Jordanian</option>
+        <option>UR</option>
+        <option>Bravo</option>
+        <option>Fly Baghdad</option>
+        <option>Avia Traffic</option>
+        <option>Tail wind</option>
+        <option>Mahan Air</option>
+        <option>Armenia Air</option>
+        <option>Jordan aviation</option>
+        <option>TABAN AIR</option>
+        <option>Jet Magic Airline</option>
+        <option>Klas Jet Airline</option>
+        <option>RED WINGS</option>
+        <option>PAKISTAN AIR</option>
+        <option>QESHM AIR</option>
+        <option>Cash Customers</option>
+        <option>ATA air</option>
+        <option>Aseman air</option>
+        <option>Nile Air</option>
+        <option>ASA</option>
+        <option>UT Air</option>
+        <option>SAHA Air</option>
+        <option>Pars Air</option>
+        <option>Zagros Air</option>
+        <option>AEROFLOT Airline</option>
+        <option>Fly Arna</option>
+        <option>Fly Nas</option>
+        <option>Flyadeal</option>
+        <option>Fly Sepehran</option>
+        <option>VIP Terminal</option>
+        <option>Salam Air</option>
+        <option>ASL Group</option>
+        <option>Baghdad Lounge</option>
+        <option>Caspian Air</option>
+        <option>IRAN Air</option>
+        <option>freebird</option>
+        <option>Iran Tour</option>
+        <option>Air Arabia-Abo Dhabi</option>
+        <option>A Jet</option>
+        <option>Gulf Air</option>
+        <option>Sama terminal</option>
+        <option>Global</option>
+        <option>Simor</option>
+        <option>Al Jazzera</option>
+        <option>Akitu Aviation</option>
+        <option>Alpha Star Aviation</option>
+        <option>Yazd airline</option>
+        <option>AVA</option>
+        <option>Sendebad travel</option>
+        <option>Fly cham</option>
+        <option>AzerbaijanAirlines</option>
+        <option>Fly Kish</option>
+        <option>Aegean Air</option>
+        <option>Oman Air</option>
+        <option>AlRawdatain-VRS</option>
+        <option>AlRawdatain-AVA</option>
+        <option>AlRawdatain-MJ</option>
+        <option>Charter</option>
+        <option>Akiti Aviation</option>
+        <option>Infinifi</option>
+        <option>ItlalaAlsharq-Kich</option>
+        <option>ItlalaAlsharq-MJ</option>
+        <option>ItlalaAlsharq-SN</option>
+        <option>ItlalaAlsharq-SR</option>
+        <option>ItlalaAlsharq-QM</option>
+        <option>ItlalaAlsharq-AN</option>
+        <option>ItlalaAlsharq-ARN</option>
+        <option>ItlalaAlsharq-YZD</option>
+        <option>Arab Wings</option>
+        <option>Al Nisreen Company</option>
+      </select>
+    </div>
+  </div>
+
+  <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap">
+    <button onclick="exportExcel()">تصدير Excel</button>
+  </div>
+
+  <div class="row" style="margin-top:12px;">
+    <div class="col box" style="margin:0;background:#0f172a">
+      <div class="muted">عدد السجلات</div>
+      <div style="font-size:22px;font-weight:800" id="stat_count">0</div>
+    </div>
+  </div>
+
+  <div id="reportTable"></div>
+</div>
+
+<script>
+  const KEY = "wheel_entries_v2";
+
+  // admin gate
+  const ADMIN_SESSION_KEY = "admin_unlocked_v1";
+  const ADMIN_PASSWORD = "1234"; // غيّرها إذا تريد
+
+  const loadRows = () => JSON.parse(localStorage.getItem(KEY) || "[]");
+  const saveRows = (rows) => localStorage.setItem(KEY, JSON.stringify(rows));
+
+  function todayISO(){
+    const d = new Date();
+    const yyyy = d.getFullYear();
+    const mm = String(d.getMonth()+1).padStart(2,"0");
+    const dd = String(d.getDate()).padStart(2,"0");
+    return `${yyyy}-${mm}-${dd}`;
+  }
+
+  function applyAdminUI(){
+    const unlocked = sessionStorage.getItem(ADMIN_SESSION_KEY) === "1";
+    document.getElementById("adminBox").style.display = unlocked ? "block" : "none";
+    document.getElementById("btnLogout").style.display = unlocked ? "inline-block" : "none";
+
+    if(unlocked){
+      const r_to = document.getElementById("r_to");
+      if(r_to && !r_to.value) r_to.value = todayISO();
+      renderReport();
+    }
+  }
+
+  function openAdmin(){
+    if(sessionStorage.getItem(ADMIN_SESSION_KEY) === "1"){
+      applyAdminUI();
+      return;
+    }
+    const pass = prompt("أدخل باسوورد الأدمن:");
+    if(pass === null) return;
+    if(pass === ADMIN_PASSWORD){
+      sessionStorage.setItem(ADMIN_SESSION_KEY, "1");
+      applyAdminUI();
+    }else{
+      alert("باسوورد خطأ.");
+    }
+  }
+
+  function adminLogout(){
+    sessionStorage.removeItem(ADMIN_SESSION_KEY);
+    applyAdminUI();
+  }
+
+  function saveEntry(){
+    const date = todayISO(); // ✅ auto date
+    const tripType = document.getElementById("in_tripType").value;
+    const airline = document.getElementById("in_airline").value;
+    const flightNo = document.getElementById("in_flightNo").value.trim();
+    const empId = document.getElementById("in_empId").value.trim();
+
+    if(!flightNo) return alert("اكتب رقم الرحلة.");
+    if(!empId) return alert("اكتب الرقم الوظيفي.");
+
+    const rows = loadRows();
+    rows.push({
+      id: (crypto.randomUUID ? crypto.randomUUID() : String(Date.now())),
+      date,
+      tripType,
+      airline,
+      flightNo,
+      empId,
+      createdAt: new Date().toISOString()
+    });
+    saveRows(rows);
+
+    document.getElementById("entryMsg").textContent = "تم الحفظ ✅";
+    clearEntry();
+
+    if(sessionStorage.getItem(ADMIN_SESSION_KEY) === "1") renderReport();
+  }
+
+  function clearEntry(){
+    document.getElementById("in_tripType").value = "قدوم";
+    // airline تبقى مثل ما هي حتى ما يضطر يختار كل مرة
+    document.getElementById("in_flightNo").value = "";
+    document.getElementById("in_empId").value = "";
+  }
+
+  function inRange(d, from, to){
+    if(from && d < from) return false;
+    if(to && d > to) return false;
+    return true;
+  }
+
+  function filteredRows(){
+    const from = document.getElementById("r_from").value;
+    const to = document.getElementById("r_to").value;
+    const type = document.getElementById("r_tripType").value;
+    const airline = document.getElementById("r_airline").value;
+
+    let rows = loadRows();
+    rows = rows.filter(r => inRange(r.date, from, to));
+    if(type) rows = rows.filter(r => r.tripType === type);
+    if(airline) rows = rows.filter(r => r.airline === airline);
+
+    rows.sort((a,b) => (b.createdAt||"").localeCompare(a.createdAt||""));
+    return rows;
+  }
+
+  function renderReport(){
+    if(sessionStorage.getItem(ADMIN_SESSION_KEY) !== "1") return;
+
+    const rows = filteredRows();
+    document.getElementById("stat_count").textContent = rows.length;
+
+    let html = `
+      <table>
+        <thead>
+          <tr>
+            <th>التاريخ</th>
+            <th>اسم الايرلاين</th>
+            <th>رقم الرحلة</th>
+            <th>الرقم الوظيفي</th>
+            <th>قدوم/مغادرة</th>
+            <th>وقت الإدخال</th>
+          </tr>
+        </thead>
+        <tbody>
+    `;
+
+    for(const r of rows){
+      const t = (r.createdAt||"").replace("T"," ").slice(0,19);
+      html += `
+        <tr>
+          <td>${escapeHtml(r.date)}</td>
+          <td>${escapeHtml(r.airline)}</td>
+          <td>${escapeHtml(r.flightNo)}</td>
+          <td>${escapeHtml(r.empId)}</td>
+          <td>${escapeHtml(r.tripType)}</td>
+          <td>${escapeHtml(t)}</td>
+        </tr>
+      `;
+    }
+
+    html += `</tbody></table>`;
+    document.getElementById("reportTable").innerHTML = html;
+  }
+
+  function exportExcel(){
+    if(sessionStorage.getItem(ADMIN_SESSION_KEY) !== "1"){
+      alert("غير مسموح. الأدمن فقط.");
+      return;
+    }
+
+    const rows = filteredRows().map(r => ({
+      "التاريخ": r.date,
+      "اسم الايرلاين": r.airline,
+      "رقم الرحلة": r.flightNo,
+      "الرقم الوظيفي": r.empId,
+      "قدوم/مغادرة": r.tripType,
+      "وقت الإدخال": (r.createdAt||"").replace("T"," ").slice(0,19),
+    }));
+
+    const ws = XLSX.utils.json_to_sheet(rows);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Report");
+
+    const from = document.getElementById("r_from").value || "all";
+    const to = document.getElementById("r_to").value || "all";
+    const airline = document.getElementById("r_airline").value || "all";
+    const name = `report_${airline}_${from}_to_${to}.xlsx`;
+    XLSX.writeFile(wb, name);
+  }
+
+  function escapeHtml(s){
+    return String(s ?? "")
+      .replaceAll("&","&amp;")
+      .replaceAll("<","&lt;")
+      .replaceAll(">","&gt;")
+      .replaceAll('"',"&quot;")
+      .replaceAll("'","&#039;");
+  }
+
+  // init
+  document.getElementById("r_to").value = todayISO();
+  applyAdminUI();
+</script>
+
+</body>
+</html>
